@@ -5,10 +5,11 @@
 
 import path from "path";
 import url from "url";
-import { app, Menu } from "electron";
+import { app, Menu, dialog } from "electron";
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
 import createWindow from "./helpers/window";
+import {autoUpdater}  from 'electron-updater';
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
@@ -33,6 +34,7 @@ if (env.name !== "production") {
 app.on("ready", () => {
   setApplicationMenu();
 
+
   const mainWindow = createWindow("main", {
     width: 1000,
     height: 600
@@ -49,6 +51,22 @@ app.on("ready", () => {
   if (env.name === "development") {
     mainWindow.openDevTools();
   }
+
+  autoUpdater.checkForUpdatesAndNotify();
+
+
+  autoUpdater.on('update-downloaded', () => {
+    dialog.showMessageBox({
+      type    : 'question',
+      buttons : ['Yes', 'No'],
+      title   : 'Update available',
+      message : 'Update found. Do you want to restart the app?',
+    }, (response) => {
+      if (response === 0) { // Runs the following if 'Yes' is clicked
+        autoUpdater.quitAndInstall();
+      }
+    });
+  });
 });
 
 app.on("window-all-closed", () => {
