@@ -2,7 +2,7 @@
   "name": "electron-boilerplate",
   "productName": "Electron Boilerplate",
   "description": "Starter for your Electron application",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "author": "Mr. Gumby <mr.gumby@example.com>",
   "copyright": "© 2017, Gumby inc.",
@@ -18,7 +18,30 @@
     "directories": {
       "buildResources": "resources"
     },
-    "publish": null
+    "publish": null,
+    "win": {
+      "target": [
+        {
+          "target": "nsis-web",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "publish": [
+        {
+          "provider": "generic",
+          "url": "http://192.168.1.125:8000/nsis-web/"
+        }
+      ]
+    },
+    "nsisWeb": {
+      "appPackageUrl": "http://192.168.1.125:8000/nsis-web/",
+      "artifactName": "${productName}_${version}.${ext}",
+      "oneClick": true,
+      "perMachine": false
+    }
   },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
@@ -28,10 +51,11 @@
     "e2e": "mocha temp/e2e.js --require source-map-support/register",
     "test": "npm run unit && npm run e2e",
     "start": "node build/start.js",
-    "release": "npm test && webpack --config=build/webpack.app.config.js --env=production && electron-builder"
+    "release": "npm test && webpack --config=build/webpack.app.config.js --env=production && electron-builder -w"
   },
   "dependencies": {
-    "fs-jetpack": "^2.1.0"
+    "fs-jetpack": "^2.1.0",
+    "electron-updater": "3.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.54",
